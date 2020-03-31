@@ -14,4 +14,6 @@ trait Authorizer {
   def hasAccess(permission: HTTPPermission
                 , account: Option[Account]): Boolean
 
+  def publicList: Set[HTTPPermission]
+
 }

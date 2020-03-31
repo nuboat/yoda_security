@@ -10,14 +10,14 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import yoda.security.mvc.KnownException
-import yoda.security.mvc.json.JsonConvert
+import yoda.security.mvc.compoments.BJson
 
 import scala.reflect.runtime.universe.typeOf
 
 /**
  * @author Peerapat A on Mar 26, 2019
  */
-private[json] class JacksonImpl extends JsonConvert
+private[modules] class JacksonImpl extends BJson
   with LazyLogging {
 
   private val mapper = new ObjectMapper with ScalaObjectMapper
@@ -32,7 +32,8 @@ private[json] class JacksonImpl extends JsonConvert
   override def toOption[T: Manifest](body: String): Option[T] = try {
     Option(mapper.readValue[T](body))
   } catch {
-    case t: Throwable => throw KnownException("-1", "Invalid Json String"
+    case t: Throwable => throw KnownException("-1"
+      , "Invalid Json String"
       , s"$body can not transfer to ${typeOf[T].typeSymbol.name}")
   }
 

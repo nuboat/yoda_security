@@ -15,7 +15,7 @@ class BModule extends Module {
 
   override def bindings(environment: Environment,
                         configuration: Configuration) = Seq(
-    bind[Authorizer].to[AuthorizerManager]
+    bind[Authorizer].to[DatabaseAuthorizer]
   )
 
 }

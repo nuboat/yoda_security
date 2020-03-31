@@ -6,8 +6,8 @@ package yoda.security.repositories.generated
 
 import java.sql.{Connection, ResultSet}
 
-import in.norbor.yoda.implicits.JavaSqlImprovement._
-import in.norbor.yoda.orm.PStatement
+import yoda.orm.implicits.JavaSqlImprovement._
+import yoda.orm.PStatement
 import yoda.security.entities.ClientEntity
 
 /**

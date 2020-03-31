@@ -9,7 +9,7 @@ import javax.inject.Inject
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import yoda.security.mvc.internal.{Header, ManageAction, StandardComponents}
-import yoda.security.mvc.json.JsonConvert
+import yoda.security.mvc.compoments.BJson
 
 
 /**
@@ -23,7 +23,7 @@ trait RESTController extends BaseController
   private var cc: StandardComponents = _
 
   @Inject
-  private var json: JsonConvert = _
+  private var json: BJson = _
 
   override def controllerComponents: ControllerComponents = cc
 

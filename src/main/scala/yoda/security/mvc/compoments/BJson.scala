@@ -2,9 +2,9 @@
  * Copyright (c) 2020. Peerapat Asoktummarungsri <https://www.linkedin.com/in/peerapat>
  */
 
-package yoda.security.mvc.json
+package yoda.security.mvc.compoments
 
-trait JsonConvert {
+trait BJson {
 
   def toJson(obj: AnyRef): String
 

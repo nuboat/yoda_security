@@ -6,7 +6,7 @@ package yoda.security.modules.json
 
 import play.api.inject.Module
 import play.api.{Configuration, Environment}
-import yoda.security.mvc.json.JsonConvert
+import yoda.security.mvc.compoments.BJson
 
 /**
  * @author Peerapat A on Mar 26, 2019
@@ -15,7 +15,7 @@ class BModule extends Module {
 
   override def bindings(environment: Environment,
                         configuration: Configuration) = Seq(
-    bind[JsonConvert].to[JacksonImpl]
+    bind[BJson].to[JacksonImpl]
   )
 
 }

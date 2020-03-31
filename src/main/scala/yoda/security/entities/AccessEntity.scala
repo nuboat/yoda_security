@@ -4,8 +4,8 @@
 
 package yoda.security.entities
 
-import in.norbor.yoda.annotations.TableSchema
 import org.joda.time.DateTime
+import yoda.orm.annotations.TableSchema
 import yoda.security.definitions.AccessRole
 
 /**
