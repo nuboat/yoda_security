@@ -6,27 +6,25 @@ package yoda.security.modules.metric
 
 import java.net.{DatagramPacket, DatagramSocket, InetAddress}
 
-import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import javax.inject.Singleton
-import play.libs.Scala
-import yoda.security.mvc.compoments.BMetric
+import yoda.commons.Conf
+import yoda.security.mvc.compoments.Metric
 
 @Singleton
-private[modules] class GraphiteMetric extends BMetric with LazyLogging {
+private[modules] class GraphiteMetric extends Metric with LazyLogging {
 
-  private val conf = ConfigFactory.load()
-  private val host = Scala.Option(conf.getString("yoda.security.graphite.host"))
-  private val port = Scala.Option(conf.getInt("yoda.security.graphite.port"))
+  private val host = Conf("yoda.security.graphite.host", null)
+  private val port = Conf.int("yoda.security.graphite.host", 2003)
   private val sock = new DatagramSocket()
-  private val addr = InetAddress.getByName(host.orNull);
+  private val addr = if(host != null) InetAddress.getByName(host) else null
 
   override def info(id: String, metric: String, execution: Int): Unit = {
     logger.info(s"$id $metric $execution")
 
-    if (host.isDefined) {
+    if (host != null) {
       val message = s"$metric \n".getBytes
-      sock.send(new DatagramPacket(message, message.length, addr, port.getOrElse(2003)))
+      sock.send(new DatagramPacket(message, message.length, addr, port))
     }
   }
 

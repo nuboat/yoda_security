@@ -9,4 +9,8 @@ package yoda.security.mvc
   */
 case class HiddenException(code: String
                            , message: String
-                           , cause: String) extends RuntimeException(cause)
+                           , cause: String) extends RuntimeException(cause){
+
+  def apply(code: String, message: String): HiddenException = HiddenException(code, message, message)
+
+}

@@ -4,7 +4,7 @@
 
 package yoda.security.mvc.compoments
 
-trait BMetric {
+trait Metric {
 
   def info(id: String
            , metric: String

@@ -9,7 +9,7 @@ import scala.concurrent.duration.Duration
 /**
  * @author Peerapat A on April 13, 2018
  */
-trait BCache {
+trait Cache {
 
   def get[T: Manifest](key: String): Option[T]
 

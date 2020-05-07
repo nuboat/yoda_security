@@ -12,7 +12,8 @@ import javax.inject.Inject
 import play.api.http.{HttpVerbs, MimeTypes}
 import play.api.mvc._
 import yoda.security.mvc.authorize.{Authorizer, HTTPPermission}
-import yoda.security.mvc.{AccountRequest, HiddenException, KnownException}
+import yoda.security.mvc.compoments.Json
+import yoda.security.mvc.{AccountRequest, HiddenException, JSResponse, KnownException}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,6 +21,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @author Peerapat A on Mar 26, 2019
  */
 private[mvc] class ManageAction @Inject()(manager: Authorizer
+                                          , json: Json
                                           , val parser: BodyParsers.Default)
                                          (implicit protected val executionContext: ExecutionContext)
   extends ActionBuilder[AccountRequest, AnyContent]
@@ -54,10 +56,10 @@ private[mvc] class ManageAction @Inject()(manager: Authorizer
         unauthorized(e).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: HiddenException =>
-        failed(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        hiddenerror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: KnownException =>
-        failed(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        knownerror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: Throwable =>
         internalservererror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
@@ -80,7 +82,9 @@ private[mvc] class ManageAction @Inject()(manager: Authorizer
       case (None, None) => None
       case (Some(t1), None) => Some(t1)
       case (None, Some(t2)) => Some(t2.value)
-      case (Some(t1), Some(t2)) => Some(t1)
+      case (Some(t1), Some(t2)) =>
+        logger.warn(s"both token and cokkie has push to server, $t2")
+        Some(t1)
       case _ => None
     }
 
@@ -88,18 +92,18 @@ private[mvc] class ManageAction @Inject()(manager: Authorizer
   }
 
   private def unauthorized(e: IllegalAccessException): Future[Result] = {
-    logger.error(e.getMessage, e)
+    logger.warn(s"Message: ${e.getMessage}")
     Future.successful(Results.Unauthorized)
   }
 
-  private def failed(e: HiddenException): Future[Result] = {
-    logger.error(e.getMessage, e)
-    Future.successful(Results.Ok)
+  private def hiddenerror(e: HiddenException): Future[Result] = {
+    logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
+    Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message))))
   }
 
-  private def failed(e: KnownException): Future[Result] = {
-    logger.error(e.getMessage, e)
-    Future.successful(Results.Ok)
+  private def knownerror(e: KnownException): Future[Result] = {
+    logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
+    Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message, e.cause))))
   }
 
   private def internalservererror(e: Throwable): Future[Result] = {

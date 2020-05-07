@@ -4,7 +4,7 @@
 
 package yoda.security.mvc.compoments
 
-trait BJson {
+trait Json {
 
   def toJson(obj: AnyRef): String
 

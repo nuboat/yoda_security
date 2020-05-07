@@ -17,37 +17,24 @@ import scala.language.postfixOps
 /**
   * @author Peerapat A on Mar 18, 2017
   */
-class LocalCacheInterceptor extends MethodInterceptor
+class InfologInterceptor extends MethodInterceptor
   with LazyLogging
   with KeyFormatter {
 
-  @Inject
-  var sync: SyncCacheApi = _
-
-  @Inject
-  var async: AsyncCacheApi = _
 
   override def invoke(invocation: MethodInvocation): AnyRef = {
     val annotated = invocation.getMethod.getAnnotation(classOf[LocalCache])
     val prefix = annotated.prefix()
+
     val key = try {
       formatKey(prefix, invocation.getArguments)
     } catch {
       case t: Throwable =>
         logger.warn(t.getMessage, t)
-        return invocation.proceed()
     }
+    val any =  invocation.proceed()
 
-    val cache = sync.get[AnyRef](key)
-    if (cache.isDefined) {
-      logger.debug(s"Cache Found: $key -> ${cache.get.toString}")
-      return cache.get
-    }
 
-    val any = invocation.proceed()
-    val timeout = annotated.timeout()
-    async.set(key, any, timeout minutes)
-    logger.debug(s"Put: $key -> ${any.toString} to Cache: ")
 
     any
   }

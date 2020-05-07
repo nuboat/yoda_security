@@ -10,14 +10,14 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import yoda.security.mvc.KnownException
-import yoda.security.mvc.compoments.BJson
+import yoda.security.mvc.compoments.Json
 
 import scala.reflect.runtime.universe.typeOf
 
 /**
  * @author Peerapat A on Mar 26, 2019
  */
-private[modules] class JacksonImpl extends BJson
+private[modules] class JacksonImpl extends Json
   with LazyLogging {
 
   private val mapper = new ObjectMapper with ScalaObjectMapper

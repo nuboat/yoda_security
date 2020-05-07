@@ -15,10 +15,12 @@ yoda.security.graphite.port     // port default is 2003
 Publish Command
 ```
 sbt publishM2
+sbt publishLocal
 
 sbt publishSigned
+//sbt sonatypeBundleRelease
 sbt sonatypeRelease
-sbt "sonatypeRelease iobeid-xxxx"
+sbt "sonatypeRelease innorbor-1064"
 
 sbt sonatypeList
 sbt sonatypeClose

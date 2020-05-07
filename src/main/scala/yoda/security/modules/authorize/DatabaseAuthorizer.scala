@@ -8,7 +8,7 @@ import com.typesafe.config.ConfigFactory
 import javax.inject.{Inject, Singleton}
 import play.api.db.Database
 import play.api.http.HttpVerbs
-import yoda.security.annotations.Cache
+import yoda.security.annotations.LocalCache
 import yoda.security.entities.AccessEntity
 import yoda.security.mvc.authorize.{Account, Authorizer, HTTPPermission}
 import yoda.security.repositories.{AccessSQL, AccountSQL}
@@ -57,12 +57,12 @@ private[modules] class DatabaseAuthorizer @Inject()(db: Database
       acess.action == permission.action
   }
 
-  @Cache(prefix = "access_id", timeout = 5)
+  @LocalCache(prefix = "access_id", timeout = 5)
   private def lookupAccess(token: String): Option[AccessEntity] = db.withConnection { implicit conn =>
     accessSQL.get(token)
   }
 
-  @Cache(prefix = "account_id", timeout = 5)
+  @LocalCache(prefix = "account_id", timeout = 5)
   private def lookupAccount(accountId: Long): Option[Account] = db.withConnection { implicit conn =>
     accountSQL.get(accountId)
       .map(a => Account(

@@ -6,13 +6,13 @@ package yoda.security.modules.cache
 
 import javax.inject.{Inject, Singleton}
 import play.api.cache.{AsyncCacheApi, SyncCacheApi}
-import yoda.security.mvc.compoments.BCache
+import yoda.security.mvc.compoments.Cache
 
 import scala.concurrent.duration.Duration
 
 @Singleton
 private[modules] class PlayCache @Inject()(sync: SyncCacheApi
-                          , async: AsyncCacheApi) extends BCache {
+                          , async: AsyncCacheApi) extends Cache {
 
   def get[T: Manifest](key: String): Option[T] = sync.get[T](key)
 
