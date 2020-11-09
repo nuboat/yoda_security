@@ -4,21 +4,26 @@
 
 package yoda.security.mvc.authorize
 
-/**
- * @author Peerapat A on Mar 26, 2019
- */
-case class Account(id: String
-              , clientId: String = null
-              , email: String = null
-              , token: String = null
-              , username: String = null
-              , params: Map[String, String] = Map.empty
-              , isActive: Boolean = true
-              , isVerify: Boolean = true
-              , isChangePass: Boolean = false
-              , roles: Set[String] = Set.empty
-              , permissions: Set[String] = Set.empty) {
+import yoda.security.definitions.AccountRole
 
-  def apply(key: String): Option[String] = params.get(key)
+/**
+  * permissions = POST /action
+  *
+  * @author Peerapat A on Mar 26, 2019
+  */
+case class Account(id: String
+                   , clientId: Long
+                   , username: String
+                   , isVerify: Boolean
+                   , isActive: Boolean
+                   , isChangePass: Boolean
+                   , accountRole: AccountRole
+                   , option: Option[AnyRef] = None
+                   , roles: Set[String] = Set.empty
+                   , permissions: Set[HTTPPermission] = Set.empty) {
+
+  val isAllow: Boolean = isActive & !isChangePass
+
+  val notAllow: Boolean = !isAllow
 
 }

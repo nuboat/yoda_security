@@ -18,10 +18,10 @@ import yoda.security.mvc.{AccountRequest, HiddenException, JSResponse, KnownExce
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
- * @author Peerapat A on Mar 26, 2019
- */
-private[mvc] class ManageAction @Inject()(manager: Authorizer
-                                          , json: Json
+  * @author Peerapat A on Mar 26, 2019
+  */
+private[mvc] class ManageAction @Inject()(private val manager: Authorizer
+                                          , private val json: Json
                                           , val parser: BodyParsers.Default)
                                          (implicit protected val executionContext: ExecutionContext)
   extends ActionBuilder[AccountRequest, AnyContent]
@@ -83,8 +83,7 @@ private[mvc] class ManageAction @Inject()(manager: Authorizer
       case (Some(t1), None) => Some(t1)
       case (None, Some(t2)) => Some(t2.value)
       case (Some(t1), Some(t2)) =>
-        logger.warn(s"both token and cokkie has push to server, $t2")
-        Some(t1)
+        if (t1 == t2.value) Some(t1) else None
       case _ => None
     }
 
