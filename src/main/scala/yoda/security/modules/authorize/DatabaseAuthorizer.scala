@@ -74,8 +74,7 @@ private[modules] class DatabaseAuthorizer @Inject()(db: Database
         , isVerify = a.isVerify
         , isActive = a.isActive
         , isChangePass = a.isChangepass
-        , accountRole = AccountRole.apply(a.accountRole)
-        , option = Some(a)))
+        , accountRole = AccountRole.apply(a.accountRole)))
   }
 
 }

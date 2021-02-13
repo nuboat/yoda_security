@@ -18,7 +18,7 @@ case class Account(id: String
                    , isActive: Boolean
                    , isChangePass: Boolean
                    , accountRole: AccountRole
-                   , option: Option[AnyRef] = None
+                   , extra: Option[String] = None
                    , roles: Set[String] = Set.empty
                    , permissions: Set[HTTPPermission] = Set.empty) {
 

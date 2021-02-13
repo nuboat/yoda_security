@@ -20,10 +20,10 @@ trait RESTController extends BaseController
   with LazyLogging {
 
   @Inject
-  private var cc: StandardComponents = _
+  private var json: Json = _
 
   @Inject
-  private var json: Json = _
+  private var cc: StandardComponents = _
 
   override def controllerComponents: ControllerComponents = cc
 

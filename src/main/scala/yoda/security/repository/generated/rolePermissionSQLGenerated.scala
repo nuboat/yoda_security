@@ -1,4 +1,4 @@
-package yoda.security.repositories.generated
+package yoda.security.repository.generated
 
 import java.sql.{Connection, ResultSet}
 

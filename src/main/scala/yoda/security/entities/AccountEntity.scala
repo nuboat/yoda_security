@@ -17,8 +17,8 @@ case class AccountEntity(id: Long
                          , isActive: Boolean
                          , isVerify: Boolean
                          , isChangepass: Boolean
-                         , accountType: Int = AccountType.Individual.id
-                         , accountRole: Int = AccountRole.Owner.id
+                         , accountType: Int
+                         , accountRole: Int
                          , roleId: Long = 0
                          , username: String
                          , passwordHash: String = null
