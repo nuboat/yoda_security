@@ -1,4 +1,4 @@
-organization := "norbor"
+organization := "in.norbor"
 name := "yoda-security"
 version := "1.0.0"
 
