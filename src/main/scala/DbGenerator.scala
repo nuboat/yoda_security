@@ -16,11 +16,11 @@ object DbGenerator extends App {
   implicit val target: Target = Target(target = "./src/main/scala"
     , packages = Array("yoda", "security", "repository", "generated"))
 
-  g.gen[AccessEntity](table = "accesses", idName = "token", idType = "String")
-  g.gen[AccountEntity](table = "accounts", idName = "id", idType = "Long")
-  g.gen[ClientEntity](table = "clients", idName = "id", idType = "Long")
-  g.gen[PermissionEntity](table = "permissions", idName = "id", idType = "Long")
-  g.gen[RoleEntity](table = "roles", idName = "id", idType = "Long")
-  g.gen[RolePermissionEntity](table = "role_permission", idName = "id", idType = "Long")
+  g.gen[AccessEntity](table = "accesses", Seq("token"))
+  g.gen[AccountEntity](table = "accounts", Seq("id"))
+  g.gen[ClientEntity](table = "clients", Seq("id"))
+  g.gen[PermissionEntity](table = "permissions", Seq("id"))
+  g.gen[RoleEntity](table = "roles", Seq("id"))
+  g.gen[RolePermissionEntity](table = "role_permission", Seq("id"))
 
 }

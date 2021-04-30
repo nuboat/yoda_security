@@ -5,6 +5,7 @@
 package yoda.security.modules.json
 
 import org.scalatest.funsuite.AnyFunSuite
+import yoda.security.definitions.Ref
 
 class JacksonImplTest extends AnyFunSuite {
 
@@ -16,8 +17,8 @@ class JacksonImplTest extends AnyFunSuite {
   }
 
   test("2") {
-    val d = j.toOption[Test]("""{"name":"Yo"}""")
-    println(d)
+    val d = j.toOption("""{"name":"Yo"}""", new Ref[Test]{})
+    assert(d.get.name === "Yo")
   }
 
 }

@@ -4,17 +4,16 @@
 
 package yoda.security.mvc.internal
 
-import java.util.concurrent.TimeUnit
-
 import com.google.common.base.Stopwatch
 import com.typesafe.scalalogging.LazyLogging
-import javax.inject.Inject
 import play.api.http.{HttpVerbs, MimeTypes}
 import play.api.mvc._
 import yoda.security.mvc.authorize.{Authorizer, HTTPPermission}
 import yoda.security.mvc.compoments.Json
 import yoda.security.mvc.{AccountRequest, HiddenException, JSResponse, KnownException}
 
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -33,6 +32,7 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
   override def invokeBlock[A](request: Request[A],
                               block: AccountRequest[A] => Future[Result]): Future[Result] = {
     implicit val stopwatch: Stopwatch = Stopwatch.createStarted
+    implicit val requestImplicit: Request[A] = request
 
     val reqID = request.headers.get("X-Req-UUID").getOrElse("NA")
     val access = lookupToken(request)
@@ -90,24 +90,37 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
     token
   }
 
-  private def unauthorized(e: IllegalAccessException): Future[Result] = {
+  private def unauthorized[A](e: IllegalAccessException)
+                             (implicit request: Request[A]): Future[Result] = {
     logger.warn(s"Message: ${e.getMessage}")
+    auditLog(request.method, request.uri, "NA", code = "401")
     Future.successful(Results.Unauthorized)
   }
 
-  private def hiddenerror(e: HiddenException): Future[Result] = {
+  private def hiddenerror[A](e: HiddenException)
+                            (implicit request: Request[A]): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
+    auditLog(request.method, request.uri, e.map.getOrElse("txnId", "NA"), code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message))))
   }
 
-  private def knownerror(e: KnownException): Future[Result] = {
+  private def knownerror[A](e: KnownException)
+                           (implicit request: Request[A]): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
+    auditLog(request.method, request.uri, e.map.getOrElse("txnId", "NA"), code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message, e.cause))))
   }
 
-  private def internalservererror(e: Throwable): Future[Result] = {
+  private def internalservererror[A](e: Throwable)
+                                    (implicit request: Request[A]): Future[Result] = {
     logger.error(e.getMessage, e)
+    auditLog(request.method, request.uri, "NA", code = "500")
     Future.successful(Results.InternalServerError)
   }
 
+  private def auditLog(method: String, path: String, txnId: String, code: String): Unit = {
+    logger.info(s"$method $path\n$txnId -> $code")
+  }
+
 }
+
