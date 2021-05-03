@@ -29,10 +29,9 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
     with Header
     with LazyLogging {
 
-  override def invokeBlock[A](request: Request[A],
-                              block: AccountRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A]
+                              , block: AccountRequest[A] => Future[Result]): Future[Result] = {
     implicit val stopwatch: Stopwatch = Stopwatch.createStarted
-    implicit val requestImplicit: Request[A] = request
 
     val reqID = request.headers.get("X-Req-UUID").getOrElse("NA")
     val access = lookupToken(request)
@@ -53,16 +52,16 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
 
     } catch {
       case e: IllegalAccessException =>
-        unauthorized(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        unauthorized(e, request.method, request.uri).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: HiddenException =>
-        hiddenerror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        hiddenerror(e, request.method, request.uri).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: KnownException =>
-        knownerror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        knownerror(e, request.method, request.uri).map(_.withHeaders(headers(processTime): _*) as JSON)
 
       case e: Throwable =>
-        internalservererror(e).map(_.withHeaders(headers(processTime): _*) as JSON)
+        internalservererror(e, request.method, request.uri).map(_.withHeaders(headers(processTime): _*) as JSON)
 
     } finally {
       val userAgent = request.headers.get("User-Agent").getOrElse("N/A")
@@ -90,31 +89,27 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
     token
   }
 
-  private def unauthorized[A](e: IllegalAccessException)
-                             (implicit request: Request[A]): Future[Result] = {
+  private def unauthorized[A](e: IllegalAccessException, method: String, uri: String): Future[Result] = {
     logger.warn(s"Message: ${e.getMessage}")
-    auditLog(request.method, request.uri, "NA", code = "401")
+    auditLog(method, uri, "NA", code = "401")
     Future.successful(Results.Unauthorized)
   }
 
-  private def hiddenerror[A](e: HiddenException)
-                            (implicit request: Request[A]): Future[Result] = {
+  private def hiddenerror[A](e: HiddenException, method: String, uri: String): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
-    auditLog(request.method, request.uri, e.map.getOrElse("txnId", "NA"), code = e.code)
+    auditLog(method, uri, e.map.getOrElse("txnId", "NA"), code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message))))
   }
 
-  private def knownerror[A](e: KnownException)
-                           (implicit request: Request[A]): Future[Result] = {
+  private def knownerror[A](e: KnownException, method: String, uri: String): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
-    auditLog(request.method, request.uri, e.map.getOrElse("txnId", "NA"), code = e.code)
+    auditLog(method, uri, e.map.getOrElse("txnId", "NA"), code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message, e.cause))))
   }
 
-  private def internalservererror[A](e: Throwable)
-                                    (implicit request: Request[A]): Future[Result] = {
+  private def internalservererror[A](e: Throwable, method: String, uri: String): Future[Result] = {
     logger.error(e.getMessage, e)
-    auditLog(request.method, request.uri, "NA", code = "500")
+    auditLog(method, uri, "NA", code = "500")
     Future.successful(Results.InternalServerError)
   }
 
@@ -123,4 +118,3 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
   }
 
 }
-

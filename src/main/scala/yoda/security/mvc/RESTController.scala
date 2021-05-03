@@ -6,13 +6,13 @@ package yoda.security.mvc
 
 import akka.util.ByteString
 import com.typesafe.scalalogging.LazyLogging
-
-import javax.inject.Inject
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import yoda.security.definitions.Ref
-import yoda.security.mvc.internal.{Header, ManageAction, StandardComponents}
 import yoda.security.mvc.compoments.Json
+import yoda.security.mvc.internal.{Header, ManageAction, StandardComponents}
+
+import javax.inject.Inject
 
 
 /**
@@ -34,22 +34,54 @@ trait RESTController extends BaseController
 
   protected def action: ActionBuilder[AccountRequest, String] = cc.manageAction(cc.parsers.utf8Decoder)
 
-  protected def okJSon[A](implicit ar: AccountRequest[A]): Result = okJSon(JSResponse())
+  protected def okJSon(refNo: String)
+                      (implicit ar: AccountRequest[String]): Result = {
+    logger.info(s"${ar.method} ${ar.path}\n$refNo -> 0")
+    okJSon(JSResponse(), refNo)
+  }
 
-  protected def okJSon[A](m: AnyRef)
-                         (implicit ar: AccountRequest[A]): Result = m match {
+  protected def okJSon(js: JSResponse[AnyRef], refNo: String)
+                      (implicit ar: AccountRequest[String]): Result = {
+    logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
+    Ok(json.toJson(js)).withHeaders(headers(ar.processTime): _*) as JSON
+  }
+
+  protected def okJSon(m: AnyRef, refNo: String)
+                       (implicit ar: AccountRequest[String]): Result = m match {
     case _: String =>
+      logger.info(s"${ar.method} ${ar.path}\n$refNo -> 0")
       Ok(m.toString).withHeaders(headers(ar.processTime): _*) as JSON
-    case _ =>
+    case js: JSResponse[Any] =>
+      logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
       Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
   }
 
-  def toForm[T](ref: Ref[T])(implicit r: Request[ByteString]): Option[T] = {
+  protected def okJSon2(m: AnyRef, refNo: String)
+                       (implicit ar: AccountRequest[AnyContent]): Result = m match {
+    case _: String =>
+      Ok(m.toString).withHeaders(headers(ar.processTime): _*) as JSON
+    case js: JSResponse[Any] =>
+      logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
+      Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
+  }
+
+  def withForm[T](ref: Ref[T], r: Request[ByteString]): Option[T] = {
     val body = r.body.decodeString("UTF-8")
     if (r.headers.get("X-Trace-Body").contains("false"))
       logger.trace(s"URI: ${r.uri}\n$body")
 
     json.toOption(body, ref)
+  }
+
+  implicit class HTTPRequest(r: Request[String]) {
+
+    def toOption[T: Manifest]: Option[T] = {
+      if (r.headers.get("X-Trace-Body").contains("false"))
+        logger.debug(s"${r.method} ${r.uri} - ${r.body}")
+
+      json.toOption[T](r.body)
+    }
+
   }
 
   implicit class FormDataWrapper(formData: MultipartFormData[TemporaryFile]) {

@@ -6,8 +6,9 @@ package yoda.security.modules.json
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.{DeserializationFeature, PropertyNamingStrategies}
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, PropertyNamingStrategies}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import yoda.security.definitions.Ref
 import yoda.security.mvc.compoments.Json
@@ -25,6 +26,12 @@ class JacksonImpl extends Json
     .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
     .build
 
+  private val oldmap = new ObjectMapper with ScalaObjectMapper
+  oldmap.registerModule(DefaultScalaModule)
+  oldmap.setSerializationInclusion(Include.NON_NULL)
+  oldmap.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  oldmap.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+
   override def toJson(obj: AnyRef): String = mapper.writeValueAsString(obj)
 
   override def to[T](body: String, ref: Ref[T]): T = {
@@ -33,6 +40,12 @@ class JacksonImpl extends Json
 
   override def toOption[T](body: String, ref: Ref[T]): Option[T] = try {
     Option(mapper.readValue(body, ref))
+  } catch {
+    case t: Throwable => None
+  }
+
+  override def toOption[T: Manifest](body: String): Option[T] = try {
+    Option(oldmap.readValue[T](body))
   } catch {
     case t: Throwable => None
   }

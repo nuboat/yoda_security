@@ -14,6 +14,8 @@ trait Json {
 
   def toOption[T](body: String, ref: Ref[T]): Option[T]
 
+  def toOption[T: Manifest](body: String): Option[T]
+
   def prettyStr(o: AnyRef): String
 
 }
