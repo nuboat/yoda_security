@@ -36,23 +36,26 @@ trait RESTController extends BaseController
 
   protected def okJSon(refNo: String)
                       (implicit ar: AccountRequest[String]): Result = {
-    logger.info(s"${ar.method} ${ar.path}\n$refNo -> 0")
+    logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
     okJSon(JSResponse(), refNo)
   }
 
   protected def okJSon(js: JSResponse[AnyRef], refNo: String)
                       (implicit ar: AccountRequest[String]): Result = {
-    logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
+    logger.info(s"${ar.method} ${ar.path}: $refNo -> ${js.code}")
     Ok(json.toJson(js)).withHeaders(headers(ar.processTime): _*) as JSON
   }
 
   protected def okJSon(m: AnyRef, refNo: String)
                        (implicit ar: AccountRequest[String]): Result = m match {
     case _: String =>
-      logger.info(s"${ar.method} ${ar.path}\n$refNo -> 0")
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
       Ok(m.toString).withHeaders(headers(ar.processTime): _*) as JSON
+    case m: AnyRef =>
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
+      Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
     case js: JSResponse[Any] =>
-      logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> ${js.code}")
       Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
   }
 
@@ -60,8 +63,11 @@ trait RESTController extends BaseController
                        (implicit ar: AccountRequest[AnyContent]): Result = m match {
     case _: String =>
       Ok(m.toString).withHeaders(headers(ar.processTime): _*) as JSON
+    case m: AnyRef =>
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
+      Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
     case js: JSResponse[Any] =>
-      logger.info(s"${ar.method} ${ar.path}\n$refNo -> ${js.code}")
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> ${js.code}")
       Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
   }
 

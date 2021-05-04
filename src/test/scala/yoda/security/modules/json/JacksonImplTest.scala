@@ -21,6 +21,11 @@ class JacksonImplTest extends AnyFunSuite {
     assert(d.get.name === "Yo")
   }
 
+  test("3") {
+    val d = j.toOption[Test]("""{"name":"Yo"}""")
+    assert(d.get.name === "Yo")
+  }
+
 }
 
 case class Test(name: String)
