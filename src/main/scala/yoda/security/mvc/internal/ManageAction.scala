@@ -97,13 +97,13 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
 
   private def hiddenerror[A](e: HiddenException, method: String, uri: String): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
-    auditLog(method, uri, e.map.getOrElse("txnId", "NA"), code = e.code)
+    auditLog(method, uri, e.refNo, code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message))))
   }
 
   private def knownerror[A](e: KnownException, method: String, uri: String): Future[Result] = {
     logger.warn(s"Message: ${e.message}, Cause: ${e.cause}")
-    auditLog(method, uri, e.map.getOrElse("txnId", "NA"), code = e.code)
+    auditLog(method, uri, e.refNo, code = e.code)
     Future.successful(Results.Ok(json.toJson(JSResponse(code = e.code, message = e.message, e.cause))))
   }
 
@@ -113,8 +113,8 @@ private[mvc] class ManageAction @Inject()(private val manager: Authorizer
     Future.successful(Results.InternalServerError)
   }
 
-  private def auditLog(method: String, path: String, txnId: String, code: String): Unit = {
-    logger.info(s"$method $path\n$txnId -> $code")
+  private def auditLog(method: String, path: String, refNo: String, code: String): Unit = {
+    logger.info(s"$method $path\n$refNo -> $code")
   }
 
 }
