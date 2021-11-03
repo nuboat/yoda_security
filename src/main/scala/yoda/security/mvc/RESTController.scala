@@ -56,6 +56,16 @@ trait RESTController extends BaseController
       Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
   }
 
+  protected def okJSon2(m: AnyRef, refNo: String)
+                      (implicit ar: AccountRequest[AnyContent]): Result = m match {
+    case _: String =>
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
+      Ok(m.toString).withHeaders(headers(ar.processTime): _*) as JSON
+    case m: AnyRef =>
+      logger.info(s"${ar.method} ${ar.path}: $refNo -> 0")
+      Ok(json.toJson(m)).withHeaders(headers(ar.processTime): _*) as JSON
+  }
+
   def withForm[T](ref: Ref[T], r: Request[ByteString]): Option[T] = {
     val body = r.body.decodeString("UTF-8")
     if (r.headers.get("X-Trace-Body").contains("false"))

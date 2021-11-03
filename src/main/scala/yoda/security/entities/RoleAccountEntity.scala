@@ -12,6 +12,6 @@ import yoda.orm.annotations.TableSchema
   */
 @TableSchema(pk = "id", name = "role_account")
 case class RoleAccountEntity(roleId: Long
-                             , accountId: Int
+                             , accountId: Long
                              , creatorId: Long = 0
                              , created: DateTime = DateTime.now)

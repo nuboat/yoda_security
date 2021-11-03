@@ -27,7 +27,7 @@ trait roleAccountSQLGenerated {
   def insert(e: RoleAccountEntity)
             (implicit conn: Connection): Int = PStatement(INSERT)
     .setLong(e.roleId)
-    .setInt(e.accountId)
+    .setLong(e.accountId)
     .setLong(e.creatorId)
     .setDateTime(e.created)
     .update
@@ -37,7 +37,7 @@ trait roleAccountSQLGenerated {
     .setLong(e.creatorId)
     .setDateTime(e.created)
     .setLong(e.roleId)
-    .setInt(e.accountId)
+    .setLong(e.accountId)
     .update
 
   def get(roleId: Long, accountId: Int)

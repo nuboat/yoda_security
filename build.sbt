@@ -1,6 +1,6 @@
 organization := "in.norbor"
 name := "yoda-security"
-version := "1.3.0"
+version := "1.3.1"
 
 scalaVersion := "2.13.6"
 scalacOptions := Seq("-feature", "-deprecation", "-unchecked", "-Ywarn-dead-code")
