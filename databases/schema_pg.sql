@@ -23,7 +23,6 @@ CREATE TABLE accounts (
   is_changepass BOOLEAN,
   account_type INTEGER NOT NULL,
   account_role INTEGER NOT NULL,
-  role_id BIGINT NOT NULL,
   username VARCHAR(64) NOT NULL,
   password_hash VARCHAR(64),
   email VARCHAR(256) NOT NULL,
@@ -31,6 +30,9 @@ CREATE TABLE accounts (
   lastname VARCHAR(256),
   mobile_no VARCHAR(64),
   meta_json TEXT,
+  avatar_url VARCHAR(256),
+  staff_code VARCHAR(256),
+  position VARCHAR(256),
   creator_id BIGINT,
   created TIMESTAMP WITH TIME ZONE,
   CONSTRAINT accounts_pk PRIMARY KEY (id)
@@ -46,4 +48,37 @@ CREATE TABLE accesses (
   creator_id BIGINT,
   created TIMESTAMP WITH TIME ZONE NOT NULL,
   CONSTRAINT accesses_pk PRIMARY KEY (token)
+);
+
+CREATE TABLE roles (
+  id BIGINT,
+  role_name VARCHAR(256) NOT NULL,
+  creator_id BIGINT,
+  created TIMESTAMP WITH TIME ZONE NOT NULL,
+  CONSTRAINT roles_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE permissions (
+  id BIGINT,
+  method_id INT,
+  endpoint VARCHAR(256) NOT NULL,
+  creator_id BIGINT,
+  created TIMESTAMP WITH TIME ZONE NOT NULL,
+  CONSTRAINT permissions_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE role_account (
+  role_id BIGINT,
+  account_id BIGINT,
+  creator_id BIGINT,
+  created TIMESTAMP WITH TIME ZONE NOT NULL,
+  CONSTRAINT role_account_pk PRIMARY KEY (role_id, account_id)
+);
+
+CREATE TABLE role_permission (
+  role_id BIGINT,
+  permission_id BIGINT,
+  creator_id BIGINT,
+  created TIMESTAMP WITH TIME ZONE NOT NULL,
+  CONSTRAINT role_permission_pk PRIMARY KEY (role_id, permission_id)
 );

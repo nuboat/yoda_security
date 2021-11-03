@@ -12,5 +12,4 @@ class HiddenExceptionTest extends AnyFunSuite {
     val t = HiddenException(code = "")
   }
 
-
 }

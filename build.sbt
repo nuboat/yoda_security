@@ -1,8 +1,8 @@
 organization := "in.norbor"
 name := "yoda-security"
-version := "1.1.6"
+version := "1.3.0"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.6"
 scalacOptions := Seq("-feature", "-deprecation", "-unchecked", "-Ywarn-dead-code")
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
 

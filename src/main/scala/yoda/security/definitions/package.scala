@@ -19,4 +19,6 @@ package object definitions {
 
   type AccountType = AccountType.Value
 
+  type HTTPMethod = HTTPMethod.Value
+
 }

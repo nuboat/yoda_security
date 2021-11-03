@@ -32,11 +32,6 @@ trait rolesSQLGenerated {
     .setDateTime(e.created)
     .update
 
-  def get(id: Long)
-         (implicit conn: Connection): Option[RoleEntity] = PStatement(QUERY_ID)
-    .setLong(id)
-    .queryOne(parse)
-
   def update(e: RoleEntity)
             (implicit conn: Connection): Int = PStatement(UPDATE)
     .setString(e.roleName)
@@ -44,6 +39,11 @@ trait rolesSQLGenerated {
     .setDateTime(e.created)
     .setLong(e.id)
     .update
+
+  def get(id: Long)
+         (implicit conn: Connection): Option[RoleEntity] = PStatement(QUERY_ID)
+    .setLong(id)
+    .queryOne(parse)
 
   def delete(id: Long)(implicit conn: Connection): Int = PStatement(DELETE)
     .setLong(id)
@@ -53,7 +53,8 @@ trait rolesSQLGenerated {
     .queryOne(rs => rs.getLong(1))
     .get
 
-  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p)) throw new IllegalArgumentException(s"$p has problem.")
+  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p))
+    throw new IllegalArgumentException(s"$p has problem.")
 
   protected def parse(rs: ResultSet): RoleEntity = RoleEntity(
     id = rs.getLong("id")

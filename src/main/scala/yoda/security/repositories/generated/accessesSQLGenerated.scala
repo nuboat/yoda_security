@@ -36,11 +36,6 @@ trait accessesSQLGenerated {
     .setDateTime(e.created)
     .update
 
-  def get(id: String)
-         (implicit conn: Connection): Option[AccessEntity] = PStatement(QUERY_ID)
-    .setString(id)
-    .queryOne(parse)
-
   def update(e: AccessEntity)
             (implicit conn: Connection): Int = PStatement(UPDATE)
     .setLong(e.clientId)
@@ -53,15 +48,21 @@ trait accessesSQLGenerated {
     .setString(e.token)
     .update
 
-  def delete(id: String)(implicit conn: Connection): Int = PStatement(DELETE)
-    .setString(id)
+  def get(token: String)
+         (implicit conn: Connection): Option[AccessEntity] = PStatement(QUERY_ID)
+    .setString(token)
+    .queryOne(parse)
+
+  def delete(token: String)(implicit conn: Connection): Int = PStatement(DELETE)
+    .setString(token)
     .update
 
   def count()(implicit conn: Connection): Long = PStatement(COUNT)
     .queryOne(rs => rs.getLong(1))
     .get
 
-  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p)) throw new IllegalArgumentException(s"$p has problem.")
+  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p))
+    throw new IllegalArgumentException(s"$p has problem.")
 
   protected def parse(rs: ResultSet): AccessEntity = AccessEntity(
     token = rs.getString("token")

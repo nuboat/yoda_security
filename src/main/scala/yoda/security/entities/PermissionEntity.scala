@@ -14,7 +14,5 @@ import yoda.orm.annotations.TableSchema
 case class PermissionEntity(id: Long
                             , methodId: Int
                             , endpoint: String
-                            , accessId: Int
-                            , metaJson: String = "{}"
                             , creatorId: Long = 0
                             , created: DateTime = DateTime.now)

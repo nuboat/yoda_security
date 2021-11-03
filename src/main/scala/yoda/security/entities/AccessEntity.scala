@@ -6,7 +6,6 @@ package yoda.security.entities
 
 import org.joda.time.DateTime
 import yoda.orm.annotations.TableSchema
-import yoda.security.definitions.AccessRole
 
 /**
   * @author Peerapat A on April 14, 2017
@@ -15,7 +14,7 @@ import yoda.security.definitions.AccessRole
 case class AccessEntity(token: String
                         , clientId: Long
                         , accountId: Long
-                        , accessRole: Int = AccessRole.Signin.id
+                        , accessRole: Int
                         , accessName: String = "NA"
                         , metaJson: String = "{}"
                         , creatorId: Long = 0

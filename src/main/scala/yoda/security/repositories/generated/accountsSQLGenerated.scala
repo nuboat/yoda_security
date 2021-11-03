@@ -14,15 +14,15 @@ trait accountsSQLGenerated {
 
   private val QUERY_ID: String = "SELECT * FROM accounts WHERE id = ?"
 
-  private val INSERT: String = "INSERT INTO accounts (id, client_id, is_active, is_verify, is_changepass, account_type, account_role, role_id, username, password_hash, email, firstname, lastname, mobile_no, meta_json, creator_id, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  private val INSERT: String = "INSERT INTO accounts (id, client_id, is_active, is_verify, is_changepass, account_type, account_role, username, password_hash, email, firstname, lastname, mobile_no, meta_json, avatar_url, staff_code, position, creator_id, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-  private val UPDATE: String = "UPDATE accounts SET client_id = ?, is_active = ?, is_verify = ?, is_changepass = ?, account_type = ?, account_role = ?, role_id = ?, username = ?, password_hash = ?, email = ?, firstname = ?, lastname = ?, mobile_no = ?, meta_json = ?, creator_id = ?, created = ? WHERE id = ?"
+  private val UPDATE: String = "UPDATE accounts SET client_id = ?, is_active = ?, is_verify = ?, is_changepass = ?, account_type = ?, account_role = ?, username = ?, password_hash = ?, email = ?, firstname = ?, lastname = ?, mobile_no = ?, meta_json = ?, avatar_url = ?, staff_code = ?, position = ?, creator_id = ?, created = ? WHERE id = ?"
 
   private val DELETE: String = "DELETE FROM accounts WHERE id = ?"
 
   private val COUNT: String = "SELECT COUNT(1) FROM accounts"
 
-  private val COLUMNS: Set[String] = Set("id", "client_id", "is_active", "is_verify", "is_changepass", "account_type", "account_role", "role_id", "username", "password_hash", "email", "firstname", "lastname", "mobile_no", "meta_json", "creator_id", "created")
+  private val COLUMNS: Set[String] = Set("id", "client_id", "is_active", "is_verify", "is_changepass", "account_type", "account_role", "username", "password_hash", "email", "firstname", "lastname", "mobile_no", "meta_json", "avatar_url", "staff_code", "position", "creator_id", "created")
 
   def insert(e: AccountEntity)
             (implicit conn: Connection): Int = PStatement(INSERT)
@@ -33,7 +33,6 @@ trait accountsSQLGenerated {
     .setBoolean(e.isChangepass)
     .setInt(e.accountType)
     .setInt(e.accountRole)
-    .setLong(e.roleId)
     .setString(e.username)
     .setString(e.passwordHash)
     .setString(e.email)
@@ -41,14 +40,12 @@ trait accountsSQLGenerated {
     .setString(e.lastname)
     .setString(e.mobileNo)
     .setString(e.metaJson)
+    .setString(e.avatarUrl)
+    .setString(e.staffCode)
+    .setString(e.position)
     .setLong(e.creatorId)
     .setDateTime(e.created)
     .update
-
-  def get(id: Long)
-         (implicit conn: Connection): Option[AccountEntity] = PStatement(QUERY_ID)
-    .setLong(id)
-    .queryOne(parse)
 
   def update(e: AccountEntity)
             (implicit conn: Connection): Int = PStatement(UPDATE)
@@ -58,7 +55,6 @@ trait accountsSQLGenerated {
     .setBoolean(e.isChangepass)
     .setInt(e.accountType)
     .setInt(e.accountRole)
-    .setLong(e.roleId)
     .setString(e.username)
     .setString(e.passwordHash)
     .setString(e.email)
@@ -66,10 +62,18 @@ trait accountsSQLGenerated {
     .setString(e.lastname)
     .setString(e.mobileNo)
     .setString(e.metaJson)
+    .setString(e.avatarUrl)
+    .setString(e.staffCode)
+    .setString(e.position)
     .setLong(e.creatorId)
     .setDateTime(e.created)
     .setLong(e.id)
     .update
+
+  def get(id: Long)
+         (implicit conn: Connection): Option[AccountEntity] = PStatement(QUERY_ID)
+    .setLong(id)
+    .queryOne(parse)
 
   def delete(id: Long)(implicit conn: Connection): Int = PStatement(DELETE)
     .setLong(id)
@@ -79,7 +83,8 @@ trait accountsSQLGenerated {
     .queryOne(rs => rs.getLong(1))
     .get
 
-  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p)) throw new IllegalArgumentException(s"$p has problem.")
+  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p))
+    throw new IllegalArgumentException(s"$p has problem.")
 
   protected def parse(rs: ResultSet): AccountEntity = AccountEntity(
     id = rs.getLong("id")
@@ -89,7 +94,6 @@ trait accountsSQLGenerated {
     , isChangepass = rs.getBoolean("is_changepass")
     , accountType = rs.getInt("account_type")
     , accountRole = rs.getInt("account_role")
-    , roleId = rs.getLong("role_id")
     , username = rs.getString("username")
     , passwordHash = rs.getString("password_hash")
     , email = rs.getString("email")
@@ -97,6 +101,9 @@ trait accountsSQLGenerated {
     , lastname = rs.getString("lastname")
     , mobileNo = rs.getString("mobile_no")
     , metaJson = rs.getString("meta_json")
+    , avatarUrl = rs.getString("avatar_url")
+    , staffCode = rs.getString("staff_code")
+    , position = rs.getString("position")
     , creatorId = rs.getLong("creator_id")
     , created = rs.getDateTime("created")
   )

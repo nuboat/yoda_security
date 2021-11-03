@@ -6,7 +6,6 @@ package yoda.security.entities
 
 import org.joda.time.DateTime
 import yoda.orm.annotations.TableSchema
-import yoda.security.definitions.{AccountRole, AccountType}
 
 /**
   * @author Peerapat A on April 14, 2017
@@ -19,7 +18,6 @@ case class AccountEntity(id: Long
                          , isChangepass: Boolean
                          , accountType: Int
                          , accountRole: Int
-                         , roleId: Long = 0
                          , username: String
                          , passwordHash: String = null
                          , email: String
@@ -27,5 +25,8 @@ case class AccountEntity(id: Long
                          , lastname: String = null
                          , mobileNo: String = null
                          , metaJson: String = "{}"
+                         , avatarUrl: String = null
+                         , staffCode: String = null
+                         , position: String = null
                          , creatorId: Long = 0
                          , created: DateTime = DateTime.now)

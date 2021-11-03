@@ -35,11 +35,6 @@ trait clientsSQLGenerated {
     .setDateTime(e.created)
     .update
 
-  def get(id: Long)
-         (implicit conn: Connection): Option[ClientEntity] = PStatement(QUERY_ID)
-    .setLong(id)
-    .queryOne(parse)
-
   def update(e: ClientEntity)
             (implicit conn: Connection): Int = PStatement(UPDATE)
     .setString(e.clientName)
@@ -51,6 +46,11 @@ trait clientsSQLGenerated {
     .setLong(e.id)
     .update
 
+  def get(id: Long)
+         (implicit conn: Connection): Option[ClientEntity] = PStatement(QUERY_ID)
+    .setLong(id)
+    .queryOne(parse)
+
   def delete(id: Long)(implicit conn: Connection): Int = PStatement(DELETE)
     .setLong(id)
     .update
@@ -59,7 +59,8 @@ trait clientsSQLGenerated {
     .queryOne(rs => rs.getLong(1))
     .get
 
-  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p)) throw new IllegalArgumentException(s"$p has problem.")
+  protected def verifyName(p: String): Unit = if (!COLUMNS.contains(p))
+    throw new IllegalArgumentException(s"$p has problem.")
 
   protected def parse(rs: ResultSet): ClientEntity = ClientEntity(
     id = rs.getLong("id")

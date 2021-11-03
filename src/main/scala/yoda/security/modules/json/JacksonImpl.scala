@@ -41,13 +41,13 @@ class JacksonImpl extends Json
   override def toOption[T](body: String, ref: Ref[T]): Option[T] = try {
     Option(mapper.readValue(body, ref))
   } catch {
-    case t: Throwable => None
+    case _: Throwable => None
   }
 
   override def toOption[T: Manifest](body: String): Option[T] = try {
     Option(oldmap.readValue[T](body))
   } catch {
-    case t: Throwable => None
+    case _: Throwable => None
   }
 
   override def prettyStr(o: AnyRef): String = mapper
