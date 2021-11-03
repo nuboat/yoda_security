@@ -40,15 +40,15 @@ trait roleAccountSQLGenerated {
     .setLong(e.accountId)
     .update
 
-  def get(roleId: Long, accountId: Int)
+  def get(roleId: Long, accountId: Long)
          (implicit conn: Connection): Option[RoleAccountEntity] = PStatement(QUERY_ID)
     .setLong(roleId)
-    .setInt(accountId)
+    .setLong(accountId)
     .queryOne(parse)
 
-  def delete(roleId: Long, accountId: Int)(implicit conn: Connection): Int = PStatement(DELETE)
+  def delete(roleId: Long, accountId: Long)(implicit conn: Connection): Int = PStatement(DELETE)
     .setLong(roleId)
-    .setInt(accountId)
+    .setLong(accountId)
     .update
 
   def count()(implicit conn: Connection): Long = PStatement(COUNT)
@@ -60,7 +60,7 @@ trait roleAccountSQLGenerated {
 
   protected def parse(rs: ResultSet): RoleAccountEntity = RoleAccountEntity(
     roleId = rs.getLong("role_id")
-    , accountId = rs.getInt("account_id")
+    , accountId = rs.getLong("account_id")
     , creatorId = rs.getLong("creator_id")
     , created = rs.getDateTime("created")
   )
