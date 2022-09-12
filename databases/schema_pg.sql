@@ -44,6 +44,7 @@ CREATE TABLE accesses (
   account_id BIGINT NOT NULL,
   access_role INT NOT NULL,
   access_name VARCHAR(64),
+  expire TIMESTAMP WITH TIME ZONE NOT NULL,
   meta_json TEXT,
   creator_id BIGINT,
   created TIMESTAMP WITH TIME ZONE NOT NULL,

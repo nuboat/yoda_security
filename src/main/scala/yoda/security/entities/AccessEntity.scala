@@ -16,6 +16,7 @@ case class AccessEntity(token: String
                         , accountId: Long
                         , accessRole: Int
                         , accessName: String = "NA"
+                        , expire: DateTime
                         , metaJson: String = "{}"
                         , creatorId: Long = 0
                         , created: DateTime = DateTime.now)

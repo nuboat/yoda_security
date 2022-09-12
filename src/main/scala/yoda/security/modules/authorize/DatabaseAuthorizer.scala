@@ -10,7 +10,7 @@ import play.api.http.HttpVerbs
 import yoda.orm.PStatement
 import yoda.security.annotations.LocalCache
 import yoda.security.definitions.{AccountRole, HTTPMethod}
-import yoda.security.entities.{AccessEntity, PermissionEntity}
+import yoda.security.entities.AccessEntity
 import yoda.security.mvc.authorize.{Account, Authorizer, HTTPPermission, PermissionValidation}
 import yoda.security.repositories.{AccessSQL, AccountSQL, RoleAccountSQL}
 
@@ -35,6 +35,7 @@ private[modules] class DatabaseAuthorizer @Inject()(private val db: Database
 
   override def lookup(token: String): Option[Account] = {
     lookupAccess(token)
+      .filter(a => a.expire.getMillis > System.currentTimeMillis)
       .flatMap(a => lookupAccount(a.accountId))
   }
 

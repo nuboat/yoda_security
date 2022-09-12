@@ -14,15 +14,15 @@ trait accessesSQLGenerated {
 
   private val QUERY_ID: String = "SELECT * FROM accesses WHERE token = ?"
 
-  private val INSERT: String = "INSERT INTO accesses (token, client_id, account_id, access_role, access_name, meta_json, creator_id, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+  private val INSERT: String = "INSERT INTO accesses (token, client_id, account_id, access_role, access_name, expire, meta_json, creator_id, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-  private val UPDATE: String = "UPDATE accesses SET client_id = ?, account_id = ?, access_role = ?, access_name = ?, meta_json = ?, creator_id = ?, created = ? WHERE token = ?"
+  private val UPDATE: String = "UPDATE accesses SET client_id = ?, account_id = ?, access_role = ?, access_name = ?, expire = ?, meta_json = ?, creator_id = ?, created = ? WHERE token = ?"
 
   private val DELETE: String = "DELETE FROM accesses WHERE token = ?"
 
   private val COUNT: String = "SELECT COUNT(1) FROM accesses"
 
-  private val COLUMNS: Set[String] = Set("token", "client_id", "account_id", "access_role", "access_name", "meta_json", "creator_id", "created")
+  private val COLUMNS: Set[String] = Set("token", "client_id", "account_id", "access_role", "access_name", "expire", "meta_json", "creator_id", "created")
 
   def insert(e: AccessEntity)
             (implicit conn: Connection): Int = PStatement(INSERT)
@@ -31,6 +31,7 @@ trait accessesSQLGenerated {
     .setLong(e.accountId)
     .setInt(e.accessRole)
     .setString(e.accessName)
+    .setDateTime(e.expire)
     .setString(e.metaJson)
     .setLong(e.creatorId)
     .setDateTime(e.created)
@@ -42,6 +43,7 @@ trait accessesSQLGenerated {
     .setLong(e.accountId)
     .setInt(e.accessRole)
     .setString(e.accessName)
+    .setDateTime(e.expire)
     .setString(e.metaJson)
     .setLong(e.creatorId)
     .setDateTime(e.created)
@@ -70,6 +72,7 @@ trait accessesSQLGenerated {
     , accountId = rs.getLong("account_id")
     , accessRole = rs.getInt("access_role")
     , accessName = rs.getString("access_name")
+    , expire = rs.getDateTime("expire")
     , metaJson = rs.getString("meta_json")
     , creatorId = rs.getLong("creator_id")
     , created = rs.getDateTime("created")
