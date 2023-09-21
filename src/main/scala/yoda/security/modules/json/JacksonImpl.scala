@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, Pro
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
+import yoda.commons.JodaJacksonModule
 import yoda.security.definitions.Ref
 import yoda.security.mvc.compoments.Json
 
@@ -21,6 +22,7 @@ class JacksonImpl extends Json
 
   private val mapper = JsonMapper.builder()
     .addModule(DefaultScalaModule)
+    .addModule(JodaJacksonModule)
     .serializationInclusion(Include.NON_NULL)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
@@ -28,6 +30,7 @@ class JacksonImpl extends Json
 
   private val oldmap = new ObjectMapper with ScalaObjectMapper
   oldmap.registerModule(DefaultScalaModule)
+  oldmap.registerModule(JodaJacksonModule)
   oldmap.setSerializationInclusion(Include.NON_NULL)
   oldmap.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   oldmap.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
