@@ -4,6 +4,7 @@
 
 package yoda.security.modules.json
 
+import org.joda.time.DateTime
 import org.scalatest.funsuite.AnyFunSuite
 import yoda.security.definitions.Ref
 
@@ -26,6 +27,21 @@ class JacksonImplTest extends AnyFunSuite {
     assert(d.get.name === "Yo")
   }
 
+  test("4") {
+    val now = TestDate(DateTime.now())
+    println(j.toJson(now))
+    println(j.prettyStr(now))
+  }
+
+  test("5") {
+    val now = TestDate(DateTime.now())
+    val s = j.toJson(now)
+    val d = j.toOption[TestDate](s)
+
+    assert(now === d.get)
+  }
+
 }
 
 case class Test(name: String)
+case class TestDate(created: DateTime)
